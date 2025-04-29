@@ -36,7 +36,10 @@
     "tasks": {
         "lint": "deno lint && deno task fmt:license-headers --check",
         "fmt:license-headers": "deno run --allow-read --allow-write ./_tools/check_license.ts",
-        "ok": "deno task lint && deno fmt --check && deno test --doc"
+        "ok": "deno task lint && deno fmt --check && deno test --doc",
+        "cov:test": "deno test --coverage --clean --reporter=dot && deno task cov:html",
+        "cov": "deno coverage",
+        "cov:html": "deno task cov --html"
     },
     "workspace": [
         "./types",

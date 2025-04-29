@@ -2,7 +2,8 @@
 
 import type { Consumer, Func, Nullable, Supplier } from "@kokiri/types";
 
-class OptionalImpl<T> implements Optional<T> {
+// exported for testing
+export class OptionalImpl<T> implements Optional<T> {
     static readonly EMPTY = new OptionalImpl<unknown>(null);
 
     readonly #value: Nullable<T>;

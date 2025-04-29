@@ -72,6 +72,15 @@ Deno.test("resultError creates an error result", () => {
     );
 });
 
+Deno.test("resultError fails when not given an error", () => {
+    assertThrows(
+        // @ts-expect-error: purpose of test
+        () => resultError("not an error"),
+        Error,
+        "`error` must be instanceof Error",
+    );
+});
+
 Deno.test("ifOk and ifError execute callbacks correctly", () => {
     let seen: unknown = null;
     const ok = resultOk<string, Error>("hi");

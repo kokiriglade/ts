@@ -1,13 +1,26 @@
 // Copyright 2025-2025 kokiriglade. MIT license.
 
-import { assert, assertEquals, assertFalse, assertThrows } from "@std/assert";
+import {
+    assert,
+    assertFalse,
+    assertStrictEquals,
+    assertThrows,
+} from "@std/assert";
 import { isOptional, optional } from "./mod.ts";
+import { OptionalImpl } from "./optional.ts";
+
+Deno.test("OptionalImpl constructor", () => {
+    assertFalse(new OptionalImpl(undefined).isPresent);
+    assertFalse(new OptionalImpl(null).isPresent);
+    assertFalse(new OptionalImpl().isPresent);
+    assertStrictEquals(new OptionalImpl(42).unwrap(), 42);
+});
 
 Deno.test("optional.of non-null value", () => {
     const opt = optional(42);
     assert(opt.isPresent);
     assert(isOptional(opt));
-    assertEquals(opt.unwrap(), 42);
+    assertStrictEquals(opt.unwrap(), 42);
 });
 
 Deno.test("optional.of null or undefined yields empty", () => {
@@ -29,9 +42,9 @@ Deno.test("unwrap throws on empty optional", () => {
 
 Deno.test("unwrapOr returns default or value", () => {
     const empty = optional<number>(null);
-    assertEquals(empty.unwrapOr(100), 100);
+    assertStrictEquals(empty.unwrapOr(100), 100);
     const opt = optional(5);
-    assertEquals(opt.unwrapOr(100), 5);
+    assertStrictEquals(opt.unwrapOr(100), 5);
 });
 
 Deno.test("unwrapOrElse returns computed default or value", () => {
@@ -42,7 +55,7 @@ Deno.test("unwrapOrElse returns computed default or value", () => {
         return 99;
     });
     assert(called);
-    assertEquals(result, 99);
+    assertStrictEquals(result, 99);
 
     const opt = optional(7);
     called = false;
@@ -51,7 +64,7 @@ Deno.test("unwrapOrElse returns computed default or value", () => {
         return 0;
     });
     assertFalse(called);
-    assertEquals(val, 7);
+    assertStrictEquals(val, 7);
 });
 
 Deno.test("unwrapOrThrow throws custom error or returns value", () => {
@@ -64,7 +77,7 @@ Deno.test("unwrapOrThrow throws custom error or returns value", () => {
 
     const opt = optional(8);
     const v = opt.unwrapOrThrow(() => new Error("should not happen"));
-    assertEquals(v, 8);
+    assertStrictEquals(v, 8);
 });
 
 Deno.test("ifPresent executes only when present", () => {
@@ -73,20 +86,20 @@ Deno.test("ifPresent executes only when present", () => {
     opt.ifPresent((v) => {
         out = v;
     });
-    assertEquals(out, "hello");
+    assertStrictEquals(out, "hello");
 
     out = "";
     optional<string>(null).ifPresent((v) => {
         out = v;
     });
-    assertEquals(out, "");
+    assertStrictEquals(out, "");
 });
 
 Deno.test("map transforms present value and preserves emptiness", () => {
     const opt = optional(3);
     const mapped = opt.map((n) => n * 2);
     assert(mapped.isPresent);
-    assertEquals(mapped.unwrap(), 6);
+    assertStrictEquals(mapped.unwrap(), 6);
 
     const empty = optional<number>(null);
     const mappedEmpty = empty.map((n) => n * 2);
