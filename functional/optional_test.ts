@@ -16,14 +16,14 @@ Deno.test("OptionalImpl constructor", () => {
     assertStrictEquals(new OptionalImpl(42).unwrap(), 42);
 });
 
-Deno.test("optional.of non-null value", () => {
+Deno.test("optional of non-null value", () => {
     const opt = optional(42);
     assert(opt.isPresent);
     assert(isOptional(opt));
     assertStrictEquals(opt.unwrap(), 42);
 });
 
-Deno.test("optional.of null or undefined yields empty", () => {
+Deno.test("optional of null or undefined yields empty", () => {
     const optNull = optional(null);
     const optUndef = optional(undefined);
     assertFalse(optNull.isPresent);
@@ -33,10 +33,11 @@ Deno.test("optional.of null or undefined yields empty", () => {
 
 Deno.test("unwrap throws on empty optional", () => {
     const empty = optional<number>(null);
+    assertStrictEquals(empty.unwrap(), null);
     assertThrows(
-        () => empty.unwrap(),
+        () => empty.unwrapOrThrow(),
         Error,
-        "Optional is empty.",
+        "Optional is empty",
     );
 });
 

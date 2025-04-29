@@ -23,10 +23,11 @@ Deno.test("resultOk creates a success result", () => {
 
     const errOpt = ok.unwrapError();
     assertFalse(errOpt.isPresent);
+    assertStrictEquals(errOpt.unwrap(), null);
     assertThrows(
-        () => errOpt.unwrap(),
+        () => errOpt.unwrapOrThrow(),
         Error,
-        "Optional is empty.",
+        "Optional is empty",
     );
 
     const defaultErr = new Error("no error");
@@ -56,10 +57,11 @@ Deno.test("resultError creates an error result", () => {
 
     const valOpt = er.unwrap();
     assertFalse(valOpt.isPresent);
+    assertStrictEquals(valOpt.unwrap(), null);
     assertThrows(
-        () => valOpt.unwrap(),
+        () => valOpt.unwrapOrThrow(),
         Error,
-        "Optional is empty.",
+        "Optional is empty",
     );
 
     assertEquals(er.unwrapOr(5), 5);
@@ -121,7 +123,7 @@ Deno.test("map and mapError transform correctly", () => {
 
     const mapErr2 = er.mapError((e) => new Error(e.message + "!"));
     assert(mapErr2.isError);
-    assertEquals(mapErr2.unwrapError().unwrap().message, "err!");
+    assertEquals(mapErr2.unwrapError().unwrapOrThrow().message, "err!");
 
     const mapErr3 = ok.mapError((_) => new Error("nope"));
     assert(mapErr3.isOk);

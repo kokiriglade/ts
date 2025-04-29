@@ -28,7 +28,7 @@ class ResultImpl<T, E extends Error> implements Result<T, E> {
         return this.#value.unwrapOr(defaultValue);
     }
 
-    unwrapOrThrow(fn: Supplier<Error>): T {
+    unwrapOrThrow(fn?: Supplier<Error>): T {
         return this.#value.unwrapOrThrow(fn);
     }
 
@@ -44,7 +44,7 @@ class ResultImpl<T, E extends Error> implements Result<T, E> {
         return this.#error.unwrapOr(defaultError);
     }
 
-    unwrapErrorOrThrow(fn: Supplier<Error>): E {
+    unwrapErrorOrThrow(fn?: Supplier<Error>): E {
         return this.#error.unwrapOrThrow(fn);
     }
 
@@ -54,45 +54,43 @@ class ResultImpl<T, E extends Error> implements Result<T, E> {
 
     ifOk(fn: Consumer<T>): Result<T, E> {
         if (this.isOk) {
-            fn(this.#value.unwrap());
+            fn(this.#value.unwrapOrThrow());
         }
         return this;
     }
 
     ifError(fn: Consumer<E>): Result<T, E> {
         if (this.isError) {
-            fn(this.#error.unwrap());
+            fn(this.#error.unwrapOrThrow());
         }
         return this;
     }
 
     map<U>(fn: Func<T, U>): Result<U, E> {
         if (this.isOk) {
-            const unwrapped = this.#value.unwrap();
-            return resultOk(fn(unwrapped));
+            return resultOk(fn(this.#value.unwrapOrThrow()));
         }
-        return resultError(this.#error.unwrap());
+        return resultError(this.#error.unwrapOrThrow());
     }
 
     mapError<F extends Error>(fn: Func<E, F>): Result<T, F> {
         if (this.isError) {
-            const errUnwrapped = this.#error.unwrap();
-            return resultError(fn(errUnwrapped));
+            return resultError(fn(this.#error.unwrapOrThrow()));
         }
-        return resultOk(this.#value.unwrap());
+        return resultOk(this.#value.unwrapOrThrow());
     }
 
     flatMap<U>(fn: Func<T, Result<U, E>>): Result<U, E> {
         return this.isOk
-            ? fn(this.#value.unwrap())
-            : resultError(this.#error.unwrap());
+            ? fn(this.#value.unwrapOrThrow())
+            : resultError(this.#error.unwrapOrThrow());
     }
 
     match<U>(handlers: { ok: Func<T, U>; error: Func<E, U> }): U {
         if (this.isOk) {
-            return handlers.ok(this.#value.unwrap());
+            return handlers.ok(this.#value.unwrapOrThrow());
         }
-        return handlers.error(this.#error.unwrap());
+        return handlers.error(this.#error.unwrapOrThrow());
     }
 }
 
@@ -131,7 +129,7 @@ export interface Result<T, E extends Error> {
      * @return the success value
      * @throws the error returned by fn if this is an error
      */
-    unwrapOrThrow(fn: Supplier<Error>): T;
+    unwrapOrThrow(fn?: Supplier<Error>): T;
 
     /**
      * Returns the success value or the result of `fn` if error.
@@ -159,7 +157,7 @@ export interface Result<T, E extends Error> {
      * @return the error
      * @throws the error returned by fn if this is a success
      */
-    unwrapErrorOrThrow(fn: Supplier<Error>): E;
+    unwrapErrorOrThrow(fn?: Supplier<Error>): E;
 
     /**
      * Returns the error or the result of `fn` if success.

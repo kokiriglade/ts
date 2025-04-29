@@ -9,44 +9,43 @@ export class OptionalImpl<T> implements Optional<T> {
     readonly #value: Nullable<T>;
 
     constructor(value: Nullable<T> = null) {
-        this.#value = value === undefined ? null : value;
+        this.#value = value;
     }
 
     get isPresent(): boolean {
         return this.#value !== null;
     }
 
-    unwrap(): T {
-        if (!this.isPresent) {
-            throw new Error("Optional is empty.");
-        }
-        return this.#value as T;
+    unwrap(): Nullable<T> {
+        return this.#value;
     }
 
     unwrapOr(defaultValue: T): T {
-        return this.isPresent ? this.unwrap() : defaultValue;
+        return this.isPresent ? this.unwrapOrThrow() : defaultValue;
     }
 
     unwrapOrElse(fn: Supplier<T>): T {
-        return this.isPresent ? this.unwrap() : fn();
+        return this.isPresent ? this.unwrapOrThrow() : fn();
     }
 
-    unwrapOrThrow(fn: Supplier<Error>): T {
+    unwrapOrThrow(
+        fn: Supplier<Error> = () => new Error(`Optional is empty`),
+    ): T {
         if (!this.isPresent) {
             throw fn();
         }
-        return this.unwrap();
+        return this.unwrap() as T;
     }
 
     ifPresent(fn: Consumer<T>): void {
         if (this.isPresent) {
-            fn(this.#value as T);
+            fn(this.unwrapOrThrow());
         }
     }
 
     map<U>(mappingFunction: Func<T, U>): Optional<U> {
         return this.isPresent
-            ? optional(mappingFunction(this.unwrap()))
+            ? optional(mappingFunction(this.unwrapOrThrow()))
             : optional();
     }
 }
@@ -64,10 +63,9 @@ export interface Optional<T> {
 
     /**
      * Gets the contained value if present.
-     * @throws Error if no value is present
      * @return the contained value
      */
-    unwrap(): T;
+    unwrap(): Nullable<T>;
 
     /**
      * Gets the value if present, otherwise returns the provided default.
@@ -89,7 +87,7 @@ export interface Optional<T> {
      * @return the contained value
      * @throws the error returned by fn if no value is present
      */
-    unwrapOrThrow(fn: Supplier<Error>): T;
+    unwrapOrThrow(fn?: Supplier<Error>): T;
 
     /**
      * Executes `fn` if a value is present.
