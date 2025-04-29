@@ -1,0 +1,9 @@
+{
+    "name": "@kokiri/types",
+    "version": "0.0.4",
+    "license": "MIT",
+    "exports": {
+        ".": "./mod.ts",
+        "./integer": "./numeric/integer/mod.ts"
+    }
+}

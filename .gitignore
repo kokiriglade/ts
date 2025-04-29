@@ -1,0 +1,8 @@
+deno.lock
+
+docs/
+coverage/
+
+.DS_Store
+.idea
+.vim
