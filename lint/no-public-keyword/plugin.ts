@@ -14,7 +14,7 @@ export default {
                             range: node.range,
                             message: "Method uses `public` keyword",
                             hint:
-                                "Use of the `public` keyword is redundant. Methods are `public` by default unless prefixed with `#`.",
+                                "Use of the `public` keyword is redundant. Methods are `public` implicitly.",
                         });
                     },
                     PropertyDefinition(node): void {
@@ -24,7 +24,7 @@ export default {
                             range: node.range,
                             message: "Property uses `public` keyword",
                             hint:
-                                "Use of the `public` keyword is redundant. Properties are `public` by default unless prefixed with `#`.",
+                                "Use of the `public` keyword is redundant. Properties are `public` implicitly.",
                         });
                     },
                 };

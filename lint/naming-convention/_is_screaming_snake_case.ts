@@ -1,6 +1,6 @@
 // Copyright 2025-2025 kokiriglade. MIT license.
 
-const SCREAMING_SNAKE_CASE_REGEXP = /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_?/;
+const SCREAMING_SNAKE_CASE_REGEXP = /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_?$/;
 
 /**
  * Checks if the given string is `SCREAMING_SNAKE_CASE`.

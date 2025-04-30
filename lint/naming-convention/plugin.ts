@@ -21,7 +21,7 @@ export default {
                                             node: propertySig.key,
                                             range: propertySig.key.range,
                                             message:
-                                                `Inteface property '${propertySig.key.name}' is not \`camelCase\`.`,
+                                                `Interface property '${propertySig.key.name}' is not \`camelCase\`.`,
                                         });
                                     }
                                 }
@@ -34,7 +34,6 @@ export default {
                             case ("Identifier"):
                             case ("PrivateIdentifier"): {
                                 const name = key.name;
-                                if (!name) return;
                                 if (
                                     !isCamelCase(name)
                                 ) {
@@ -42,7 +41,7 @@ export default {
                                         node: key,
                                         range: key.range,
                                         message:
-                                            `Method '${name}' is not camelCase.`,
+                                            `Method '${name}' is not \`camelCase\`.`,
                                     });
                                 }
                             }
@@ -54,7 +53,6 @@ export default {
                             case ("Identifier"):
                             case ("PrivateIdentifier"): {
                                 const name = key.name;
-                                if (!name) return;
                                 if (!isCamelCase(name) && !node.static) {
                                     context.report({
                                         node: key,
@@ -74,8 +72,6 @@ export default {
                                 }
                                 break;
                             }
-                            default:
-                                break;
                         }
                     },
                 };
