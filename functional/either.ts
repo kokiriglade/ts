@@ -1,8 +1,7 @@
 // Copyright 2025-2025 kokiriglade. MIT license.
 
 import { type Optional, optional } from "./mod.ts";
-import type { Consumer } from "@kokiri/types";
-import type { Func } from "../types/func.ts";
+import type { Consumer, Func } from "@kokiri/types";
 
 /**
  * An {@link Either} but a plain object.
