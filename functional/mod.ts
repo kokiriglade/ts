@@ -87,3 +87,4 @@ export { isOptional, type Optional, optional } from "./optional.ts";
 export * from "./result.ts";
 export * from "./lazy.ts";
 export * from "./pair.ts";
+export * from "./either.ts";
