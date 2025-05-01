@@ -81,6 +81,54 @@
  * assertEquals(chainedResult.first, 9);
  * assertEquals(chainedResult.second, 3);
  * ```
+ *
+ * @example Either
+ * ```ts
+ * import { type Either, left, right } from "@kokiri/functional";
+ * import { assertEquals, assert } from "@std/assert";
+ *
+ * function parseJSON<T>(input: string): Either<Error, T> {
+ *     try {
+ *       const parsed = JSON.parse(input);
+ *       return right<Error, T>(parsed);
+ *     } catch (e) {
+ *       return left<Error, T>(e instanceof Error ? e : new Error(String(e)));
+ *     }
+ * }
+ *
+ * type Data = {name: string, age: number};
+ *
+ * // successful parsing
+ * const validJSON = '{"name": "Alice", "age": 30}';
+ * const result = parseJSON<Data>(validJSON);
+ *
+ * assert(result.isRight);
+ * result.ifRight(data => {
+ *   assertEquals(data.name, "Alice");
+ *   assertEquals(data.age, 30);
+ * });
+ *
+ * // transform the data with mapRight
+ * const nameOnly = result.mapRight(data => data.name);
+ * assertEquals(nameOnly.right.unwrap(), "Alice");
+ *
+ * // error handling
+ * const invalidJSON = '{name: Alice}';
+ * const errorResult = parseJSON<unknown>(invalidJSON);
+ *
+ * assert(errorResult.isLeft);
+ * errorResult.ifLeft(error => {
+ *   assert(error instanceof Error);
+ *   assert(error.message.includes("JSON"));
+ * });
+ *
+ * // using fold to handle both cases with a single function
+ * const message = errorResult.fold(
+ *   error => `Error: ${error.message}`,
+ *   data => `Success: ${JSON.stringify(data)}`
+ * );
+ * assert(message.startsWith("Error:"));
+ * ```
  * @module
  */
 export { isOptional, type Optional, optional } from "./optional.ts";
