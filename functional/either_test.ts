@@ -6,7 +6,15 @@ import {
     assertFalse,
     assertStrictEquals,
 } from "@std/assert";
-import { left, right } from "./either.ts";
+import {
+    type Either,
+    isEither,
+    type JSONEither,
+    left,
+    right,
+} from "./either.ts";
+import { type Optional, optional } from "./optional.ts";
+import type { Consumer, Func } from "@kokiri/types";
 
 Deno.test("left creates a left Either", () => {
     const leftEither = left<string, number>("error");
@@ -165,4 +173,77 @@ Deno.test("toJSON serializes correctly", () => {
     const json2 = rightEither.toJSON();
     assertEquals(json2.left, undefined);
     assertEquals(json2.right, 42);
+});
+
+Deno.test("isEither is correct", () => {
+    class CopyOfRight<L, R> implements Either<L, R> {
+        readonly #value: R;
+
+        constructor(value: R) {
+            this.#value = value;
+        }
+
+        get left(): Optional<L> {
+            return optional();
+        }
+
+        get right(): Optional<R> {
+            return optional(this.#value);
+        }
+        get isLeft(): boolean {
+            return false;
+        }
+
+        get isRight(): boolean {
+            return true;
+        }
+
+        ifLeft(_: Consumer<L>): Either<L, R> {
+            return this;
+        }
+
+        ifRight(fn: Consumer<R>): Either<L, R> {
+            fn(this.#value);
+            return this;
+        }
+
+        map<T, U>(_: Func<L, T>, fn: Func<R, U>): Either<T, U> {
+            return right(fn(this.#value));
+        }
+
+        bimap<T>(_: Func<L, T>, fn: Func<R, T>): Either<T, T> {
+            return right(fn(this.#value));
+        }
+
+        merge<T>(this: Either<T, T>): T {
+            return this.fold((x) => x, (x) => x);
+        }
+
+        mapLeft<T>(fn: Func<L, T>): Either<T, R> {
+            return this.map(fn, (v) => v);
+        }
+
+        mapRight<T>(fn: Func<R, T>): Either<L, T> {
+            return this.map((v) => v, fn);
+        }
+
+        fold<V>(_: Func<L, V>, fn: Func<R, V>): V {
+            return fn(this.#value);
+        }
+
+        swap(): Either<R, L> {
+            return left(this.#value);
+        }
+
+        toJSON(): JSONEither<L, R> {
+            return {
+                right: this.#value,
+            };
+        }
+    }
+
+    assert(isEither(left<string, number>("foo")));
+    assert(isEither(right<string, number>(69)));
+    assert(isEither(new CopyOfRight<string, number>(69)));
+    assertFalse(isEither("foo"));
 });

@@ -1,6 +1,6 @@
 // Copyright 2025-2025 kokiriglade. MIT license.
 
-import { type Optional, optional } from "./mod.ts";
+import { isOptional, type Optional, optional } from "./mod.ts";
 import type { Consumer, Func } from "@kokiri/types";
 
 /**
@@ -262,4 +262,27 @@ export function left<L, R>(value: L): Either<L, R> {
  */
 export function right<L, R>(value: R): Either<L, R> {
     return new Right(value);
+}
+
+/**
+ * Checks if a given value is an `Either`.
+ * @param obj the value to check
+ * @template L the left either type
+ * @template R the right either type
+ */
+export function isEither<L, R>(obj: unknown): obj is Either<L, R> {
+    return (
+        typeof obj === "object" &&
+        obj !== null &&
+        "isLeft" in obj &&
+        "isRight" in obj &&
+        // deno-lint-ignore no-explicit-any
+        typeof (obj as any).isLeft === "boolean" &&
+        // deno-lint-ignore no-explicit-any
+        typeof (obj as any).isRight === "boolean" &&
+        // deno-lint-ignore no-explicit-any
+        isOptional((obj as any).left) &&
+        // deno-lint-ignore no-explicit-any
+        isOptional((obj as any).right)
+    );
 }
