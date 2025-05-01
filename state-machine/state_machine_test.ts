@@ -115,7 +115,7 @@ Deno.test("Error handling", () => {
                 .build(context);
         },
         Error,
-        'Optional is empty',
+        "Optional is empty",
     );
 
     const stateMachine = new StateMachineBuilder<TestContext>()
@@ -126,7 +126,7 @@ Deno.test("Error handling", () => {
     assertThrows(
         () => stateMachine.transitionTo("INVALID_STATE"),
         Error,
-        'Optional is empty',
+        "Optional is empty",
     );
 });
 

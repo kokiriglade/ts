@@ -32,7 +32,8 @@ export class StateMachine<T> {
 
         // set initial state
         this.#currentStateId = config.initialStateId;
-        const initialState = this.getState(config.initialStateId).unwrapOrThrow();
+        const initialState = this.getState(config.initialStateId)
+            .unwrapOrThrow();
 
         // enter initial state
         if (initialState.onEnter) {
@@ -86,7 +87,8 @@ export class StateMachine<T> {
     transitionTo(stateId: string): void {
         const targetState = this.getState(stateId).unwrapOrThrow();
 
-        const currentState = this.getState(this.#currentStateId).unwrapOrThrow();
+        const currentState = this.getState(this.#currentStateId)
+            .unwrapOrThrow();
 
         if (currentState.onExit) {
             currentState.onExit(this.#context);
