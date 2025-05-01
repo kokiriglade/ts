@@ -115,7 +115,7 @@ Deno.test("Error handling", () => {
                 .build(context);
         },
         Error,
-        'Initial state "INVALID_STATE" not found',
+        'Optional is empty',
     );
 
     const stateMachine = new StateMachineBuilder<TestContext>()
@@ -126,7 +126,7 @@ Deno.test("Error handling", () => {
     assertThrows(
         () => stateMachine.transitionTo("INVALID_STATE"),
         Error,
-        'Target state "INVALID_STATE" not found',
+        'Optional is empty',
     );
 });
 

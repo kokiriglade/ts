@@ -2,6 +2,7 @@
 
 import type { State, StateMachineConfig, Transition } from "./mod.ts";
 import type { Nullable } from "@kokiri/types";
+import { type Optional, optional } from "@kokiri/functional";
 
 /**
  * A general-purpose state machine implementation.
@@ -31,12 +32,7 @@ export class StateMachine<T> {
 
         // set initial state
         this.#currentStateId = config.initialStateId;
-        const initialState = this.#states.get(this.#currentStateId);
-        if (!initialState) {
-            throw new Error(
-                `Initial state "${this.#currentStateId}" not found`,
-            );
-        }
+        const initialState = this.getState(config.initialStateId).unwrapOrThrow();
 
         // enter initial state
         if (initialState.onEnter) {
@@ -52,17 +48,20 @@ export class StateMachine<T> {
     }
 
     /**
+     * Gets a state by its ID.
+     * @param stateId the state ID
+     */
+    getState(stateId: string): Optional<State<T>> {
+        return optional(this.#states.get(stateId));
+    }
+
+    /**
      * Updates the state machine, checking for transitions and calling the current state's `onUpdate` method.
      * @param deltaTime The time elapsed since the last update, in milliseconds
      */
     update(deltaTime: number): void {
         // checking for transitions
-        const current_state = this.#states.get(this.#currentStateId);
-        if (!current_state) {
-            throw new Error(
-                `Current state "${this.#currentStateId}" not found`,
-            );
-        }
+        const currentState = this.getState(this.currentState).unwrapOrThrow();
 
         const eligibleTransitions = this.#transitions.filter(
             (transition) =>
@@ -75,8 +74,8 @@ export class StateMachine<T> {
             this.transitionTo(transition.toStateId);
         }
 
-        if (current_state.onUpdate) {
-            current_state.onUpdate(this.#context, deltaTime);
+        if (currentState.onUpdate) {
+            currentState.onUpdate(this.#context, deltaTime);
         }
     }
 
@@ -85,20 +84,12 @@ export class StateMachine<T> {
      * @param stateId The ID of the state to transition to
      */
     transitionTo(stateId: string): void {
-        const targetState = this.#states.get(stateId);
-        if (!targetState) {
-            throw new Error(`Target state "${stateId}" not found`);
-        }
+        const targetState = this.getState(stateId).unwrapOrThrow();
 
-        const current_state = this.#states.get(this.#currentStateId);
-        if (!current_state) {
-            throw new Error(
-                `Current state "${this.#currentStateId}" not found`,
-            );
-        }
+        const currentState = this.getState(this.#currentStateId).unwrapOrThrow();
 
-        if (current_state.onExit) {
-            current_state.onExit(this.#context);
+        if (currentState.onExit) {
+            currentState.onExit(this.#context);
         }
 
         this.#currentStateId = stateId;
