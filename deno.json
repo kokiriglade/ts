@@ -46,6 +46,7 @@
         "./java-primitives",
         "./functional",
         "./state-machine",
+        "./modified-utf8",
         "./lint/lint-assert",
         "./lint/prefer-private-hash",
         "./lint/no-public-keyword",
