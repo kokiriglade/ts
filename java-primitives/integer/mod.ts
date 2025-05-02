@@ -5,17 +5,18 @@
  *
  * @example
  * ```ts
- * import { isInteger, assertInteger, asInteger } from "@kokiri/types/integer";
+ * import { isInteger, assertInteger, asInteger } from "@kokiri/java-primitives/integer";
  * import { assertFalse, assertStrictEquals } from "@std/assert";
  *
  * assertInteger(42);
  * assertFalse(isInteger(3.14));
  *
- * // by default, `asInteger` will just remove the numbers following the decimal point
+ * // by default, `asInteger` will remove the numbers following the decimal point
+ * // this is what casting to an integer with Java does
  * assertStrictEquals(asInteger(3.5), 3);
  * assertStrictEquals(asInteger(-3.5), -3);
  *
- * // ...but you can pass your own coercion method
+ * // ...but you can pass your own coercion method if you want
  * assertStrictEquals(asInteger(3.5, Math.ceil), 4);
  * assertStrictEquals(asInteger(-3.5, Math.ceil), -3);
  * ```

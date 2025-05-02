@@ -1,0 +1,13 @@
+{
+    "name": "@kokiri/java-primitives",
+    "version": "0.0.1",
+    "license": "MIT",
+    "exports": {
+        ".": "./mod.ts",
+        "./byte": "./byte/mod.ts",
+        "./short": "./short/mod.ts",
+        "./integer": "./integer/mod.ts",
+        "./long": "./long/mod.ts",
+        "./float": "./float/mod.ts"
+    }
+}

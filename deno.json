@@ -43,6 +43,7 @@
     },
     "workspace": [
         "./types",
+        "./java-primitives",
         "./functional",
         "./state-machine",
         "./lint/lint-assert",

@@ -1,13 +1,7 @@
 // Copyright 2025-2025 kokiriglade. MIT license.
 
 import { assert, assertEquals, assertFalse, assertThrows } from "@std/assert";
-import {
-    asInteger,
-    assertInteger,
-    assertSafeInteger,
-    isInteger,
-    isSafeInteger,
-} from "./integer.ts";
+import { asInteger, assertInteger, isInteger } from "./integer.ts";
 
 Deno.test("isInteger() identifies whole numbers", () => {
     assert(isInteger(0));
@@ -30,30 +24,7 @@ Deno.test("assertInteger() throws on non-integers", () => {
     assertThrows(
         () => assertInteger(2.5),
         Error,
-        "2.5 is not an integer",
-    );
-});
-
-Deno.test("isSafeInteger() identifies JS-safe integers", () => {
-    assert(isSafeInteger(Number.MAX_SAFE_INTEGER));
-    assert(isSafeInteger(Number.MIN_SAFE_INTEGER));
-});
-
-Deno.test("isSafeInteger() rejects out-of-range values", () => {
-    assertFalse(isSafeInteger(Number.MAX_SAFE_INTEGER + 1));
-    assertFalse(isSafeInteger(1.234e20));
-});
-
-Deno.test("assertSafeInteger() does not throw for safe integers", () => {
-    assertSafeInteger(42);
-});
-
-Deno.test("assertSafeInteger() throws when out of safe range", () => {
-    const tooBig = Number.MAX_SAFE_INTEGER + 1;
-    assertThrows(
-        () => assertSafeInteger(tooBig),
-        Error,
-        `${tooBig} is not a safe integer`,
+        "2.5 is not a java-style integer",
     );
 });
 
@@ -69,16 +40,33 @@ Deno.test("asInteger() respects a custom converter fn", () => {
     const ceil = asInteger(5.1, Math.ceil);
     assertEquals(floor, 5);
     assertEquals(ceil, 6);
+
     assertThrows(
-        () => asInteger(42, (_) => 3.14),
+        () => asInteger(42, () => 3.14),
         Error,
-        `3.14 is not an integer`,
+        "Rounded number '3.14' is not an integer, unrounded: '42'",
     );
 });
 
-Deno.test("asInteger() throws if converter returns non-integer", () => {
+Deno.test("asInteger() throws on non-finite number inputs", () => {
     assertThrows(
-        () => asInteger(3.5, () => 3.3),
+        () => asInteger(NaN),
         Error,
+        "Rounded number 'NaN' is not finite, unrounded: 'NaN'",
     );
+    assertThrows(
+        () => asInteger(Infinity),
+        Error,
+        "Rounded number 'Infinity' is not finite, unrounded: 'Infinity'",
+    );
+});
+
+Deno.test("asInteger() wraps on overflow", () => {
+    // 2_147_483_647 + 1  → wraps to -2_147_483_648
+    const maxPlusOne = asInteger(2_147_483_647 + 1);
+    assertEquals(maxPlusOne, -2_147_483_648);
+
+    // -2_147_483_648 - 1 → wraps to  2_147_483_647
+    const minMinusOne = asInteger(-2_147_483_648 - 1);
+    assertEquals(minMinusOne, 2_147_483_647);
 });

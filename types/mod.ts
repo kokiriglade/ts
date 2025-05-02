@@ -93,23 +93,6 @@
  * assert(isNonEmptyString("world"));
  * ```
  *
- * @example Integer
- * ```ts
- * import { isInteger, assertInteger, asInteger } from "@kokiri/types/integer";
- * import { assertFalse, assertStrictEquals } from "@std/assert";
- *
- * assertInteger(42);
- * assertFalse(isInteger(3.14));
- *
- * // by default, `asInteger` will just remove the numbers following the decimal point
- * assertStrictEquals(asInteger(3.5), 3);
- * assertStrictEquals(asInteger(-3.5), -3);
- *
- * // ...but you can pass your own coercion method
- * assertStrictEquals(asInteger(3.5, Math.ceil), 4);
- * assertStrictEquals(asInteger(-3.5, Math.ceil), -3);
- * ```
- *
  * @module
  */
 export * from "./func.ts";
@@ -117,4 +100,3 @@ export * from "./nullable.ts";
 export * from "./consumer.ts";
 export * from "./supplier.ts";
 export * from "./predicate.ts";
-export * from "./numeric/integer/mod.ts";
