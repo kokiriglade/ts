@@ -22,3 +22,27 @@ Deno.test("encodeInto partial buffer", () => {
     assertStrictEquals(written, 3);
     assertEquals(dest, new TextEncoder().encode("hel"));
 });
+
+Deno.test("encodeInto all branches", () => {
+    const enc = new MUTF8TextEncoder();
+    // ASCII
+    let buf = new Uint8Array(3);
+    let r = enc.encodeInto("hey", buf);
+    assertEquals(r, { read: 3, written: 3 });
+    // NUL
+    buf = new Uint8Array(2);
+    r = enc.encodeInto("\u0000", buf);
+    assertEquals(r, { read: 1, written: 2 });
+    // 2-byte
+    buf = new Uint8Array(2);
+    r = enc.encodeInto("\u07A3", buf);
+    assertEquals(r, { read: 1, written: 2 });
+    // 3-byte
+    buf = new Uint8Array(3);
+    r = enc.encodeInto("☃", buf);
+    assertEquals(r, { read: 1, written: 3 });
+});
+
+Deno.test("test getter", () => {
+    assertStrictEquals(new MUTF8TextEncoder().encoding, "modified-utf8");
+});
