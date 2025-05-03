@@ -10,6 +10,20 @@ import {
     TWO_BYTE_PREFIX,
 } from "./constants.ts";
 
+/**
+ * Allows you to convert a string into Modified UTF-8 binary data (in the form of a Uint8Array).
+ * @example
+ * ```ts
+ * import { MUTF8TextEncoder } from "@kokiri/modified-utf8";
+ * import { assertEquals } from "@std/assert";
+ *
+ * const enc = new MUTF8TextEncoder();
+ * assertEquals(
+ *   enc.encode("hi"),
+ *   new Uint8Array([0x68, 0x69]),
+ * );
+ * ```
+ */
 export class MUTF8TextEncoder implements TextEncoder {
     encode(input = ""): Uint8Array {
         const bytes: number[] = [];

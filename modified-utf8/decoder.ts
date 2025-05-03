@@ -17,6 +17,20 @@ import {
     TWO_BYTE_PREFIX,
 } from "./constants.ts";
 
+/**
+ * Allows you to convert Modified UTF-8 binary data into a string.
+ * @example
+ * ```ts
+ * import { MUTF8TextDecoder } from "@kokiri/modified-utf8";
+ * import { assertEquals } from "@std/assert";
+ *
+ * const dec = new MUTF8TextDecoder();
+ * assertEquals(
+ *   dec.decode(new Uint8Array([0x68, 0x65, 0x6C, 0x6C, 0x6F])),
+ *   "hello",
+ * );
+ * ```
+ */
 export class MUTF8TextDecoder implements TextDecoder {
     readonly #fatal: boolean;
     readonly #ignoreBOM: boolean;
